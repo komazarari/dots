@@ -1,0 +1,8 @@
+escape @@
+
+termcapinfo xterm* ti@:te@
+defencoding UTF-8
+hardstatus  on
+hardstatus  alwayslastline
+hardstatus  string "%{.Wb}.: %-w%{.RW}%n %t%{-}%+w :."
+caption        splitonly "%{.BW} >> %n %t"

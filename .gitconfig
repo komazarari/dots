@@ -1,0 +1,22 @@
+[user]
+    name = takuto.komazaki
+    email = komazarari@gmail.com
+[color]
+    ui = true
+[core]
+    editor = vim
+[merge]
+    tool = p4merge
+[mergetool "gitMerge"]
+    cmd = gitMerge \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+[mergetool "p4merge"]
+    path = /home/koma/tools/p4v-2013.1.611503/bin/p4merge
+    keepTemporaries = false
+[mergetool]
+    keepBackup = false
+    trustExitCode = false
+[alias]
+    st = status
+    ci = commit
+    co = checkout
+    ls = log --graph --all --color --pretty=format:'%Cgreen%h %cd %Cred%cn %Creset%s %Cred%d'
