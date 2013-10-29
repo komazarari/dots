@@ -8,8 +8,8 @@
 ;(set-background-color "#F6F2FF")
 ;(set-background-color "DarkSlateGray")
 (set-background-color "gray22")
-(set-face-foreground 'modeline "honeydew1")
-(set-face-background 'modeline "black")
+;(set-face-foreground 'modeline "honeydew1")
+;(set-face-background 'modeline "black")
 (set-cursor-color "spring green")
 (set-frame-parameter nil 'alpha 90)
 
