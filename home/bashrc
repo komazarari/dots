@@ -81,6 +81,12 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+case "${OSTYPE}" in
+    darwin*)
+        alias ls='ls -G'
+        export LSCOLORS=DxGxcxdxCxegedabagacad
+esac
+
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
@@ -108,12 +114,16 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
+if [ -f /usr/local/etc/bash_completion ]; then
+    . /usr/local/etc/bash_completion
+fi
 
-#source $HOME/.rvm/scripts/rvm
-#PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 eval "$(rbenv init -)"
 PATH=$PATH:$HOME/.rbenv/shims
 
+if [ -d $HOME/Library/Haskell/bin ]; then
+   export PATH=$PATH:$HOME/Library/Haskell/bin
+fi
 
 parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
