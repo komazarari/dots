@@ -5,6 +5,7 @@
     ui = true
 [core]
     editor = vim
+    pager = lv -c
 [merge]
     tool = p4merge
 [mergetool "gitMerge"]
