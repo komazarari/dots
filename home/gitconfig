@@ -1,21 +1,11 @@
 [user]
-    name = takuto.komazaki
+    name = Takuto Komazaki
     email = komazarari@gmail.com
 [color]
     ui = true
 [core]
     editor = vim
     pager = lv -c
-[merge]
-    tool = p4merge
-[mergetool "gitMerge"]
-    cmd = gitMerge \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
-[mergetool "p4merge"]
-    path = /home/koma/tools/p4v-2013.1.611503/bin/p4merge
-    keepTemporaries = false
-[mergetool]
-    keepBackup = false
-    trustExitCode = false
 [alias]
     st = status
     ci = commit
