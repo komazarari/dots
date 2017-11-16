@@ -11,3 +11,5 @@
     ci = commit
     co = checkout
     ls = log --graph --all --color --pretty=format:'%Cgreen%h %cd %Cred%cn %Creset%s %Cred%d'
+[ghq]
+    root = "$HOME/src"

@@ -1,0 +1,49 @@
+source ~/.zplug/init.zsh
+
+if [ -n "$MSYSTEM" ]; then
+    unsetopt promptcr
+    if [ -f /tmp/ssh-agent-env ]; then
+        . /tmp/ssh-agent-env
+    fi
+    zplug 'dracula/zsh', as:theme
+else
+    zplug mafredri/zsh-async, from:github
+    zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
+
+fi
+
+HISTFILE=${ZSH_HISTORY:-~/.zsh_history}
+HISTSIZE=10000
+SAVEHIST=10000
+
+function peco-select-history() {
+    local tac
+    if which tac > /dev/null; then
+        tac="tac"
+    else
+        tac="tail -r"
+    fi
+    BUFFER=$(\history -n 1 | eval $tac | awk '!a[$0]++' | peco --query "$LBUFFER")
+    CURSOR=$#BUFFER
+    zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history
+
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+export GOPATH=$HOME/dev
+export PATH=$GOPATH/bin:$PATH
+if [ -f ~/.bash_aliases ]; then
+   . ~/.bash_aliases
+fi
+
+zplug load # --verbose
+if type zprof > /dev/null 2>&1; then
+    zprof | less
+fi
