@@ -9,26 +9,33 @@ if [ -n "$MSYSTEM" ]; then
 else
     zplug mafredri/zsh-async, from:github
     zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
-
 fi
+
+zplug "b4b4r07/enhancd", use:init.sh
+# ENHANCD_FILTER=fzf; export ENHANCD_FILTER
 
 HISTFILE=${ZSH_HISTORY:-~/.zsh_history}
 HISTSIZE=10000
 SAVEHIST=10000
 
 function peco-select-history() {
-    local tac
-    if which tac > /dev/null; then
-        tac="tac"
-    else
-        tac="tail -r"
-    fi
-    BUFFER=$(\history -n 1 | eval $tac | awk '!a[$0]++' | peco --query "$LBUFFER")
+    BUFFER=$(\history -n 1 | awk '!a[$0]++' | fzf --tac --query "$LBUFFER")
     CURSOR=$#BUFFER
-    zle clear-screen
+    # zle clear-screen
 }
 zle -N peco-select-history
 bindkey '^r' peco-select-history
+
+function peco-src() {
+   local src=$(ghq list --full-path | fzf --query "$LBUFFER")
+   if [ -n "$src" ]; then
+       BUFFER="cd $src"
+       zle accept-line
+   fi
+   zle -R -c
+}
+zle -N peco-src
+bindkey '^]' peco-src
 
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
