@@ -1,5 +1,8 @@
 source ~/.zplug/init.zsh
 
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+
 if [ -n "$MSYSTEM" ]; then
     unsetopt promptcr
     if [ -f /tmp/ssh-agent-env ]; then
@@ -19,7 +22,8 @@ HISTSIZE=10000
 SAVEHIST=10000
 
 function peco-select-history() {
-    BUFFER=$(\history -n 1 | awk '!a[$0]++' | fzf --tac --query "$LBUFFER")
+#    BUFFER=$(\history -n 1 | tac | awk '!a[$0]++' | fzf --query "$LBUFFER")
+    BUFFER=$(\history -n 1 | fzf --tac --query "$LBUFFER")
     CURSOR=$#BUFFER
     # zle clear-screen
 }
@@ -54,3 +58,21 @@ zplug load # --verbose
 if type zprof > /dev/null 2>&1; then
     zprof | less
 fi
+
+if [ "$INSIDE_EMACS" ]; then
+        TERM=eterm-color
+fi
+umask 022
+export DISPLAY=localhost:0.0
+
+(
+    # command_path="/mnt/c/Program Files (x86)/VcXsrv/vcxsrv.exe"
+    command_path="/mnt/c/Program Files/VcXsrv/vcxsrv.exe"
+    command_name=$(basename "$command_path")
+    if ! tasklist.exe 2> /dev/null | fgrep -q "$command_name"; then
+        "$command_path" :0 -multiwindow -clipboard -wgl > /dev/null 2>&1 &
+    fi
+)
+alias emacs="NO_AT_BRIDGE=1 LIBGL_ALWAYS_INDIRECT=1 emacs"
+keychain -q ~/.ssh/id_rsa
+source ~/.keychain/$HOSTNAME-sh

@@ -11,5 +11,8 @@
     ci = commit
     co = checkout
     ls = log --graph --all --color --pretty=format:'%Cgreen%h %cd %Cred%cn %Creset%s %Cred%d'
+    rgrep = "!f(){ git grep $1 $(git ls-remote . 'refs/remotes/*' | cut -f 2); };f"
+    lgrep = "!f(){ git grep $1 $(git branch | sed 's/\\*//'); };f"
+
 [ghq]
     root = ~/src
