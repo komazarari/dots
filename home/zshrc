@@ -26,7 +26,7 @@ SAVEHIST=10000
 
 function peco-select-history() {
 #    BUFFER=$(\history -n 1 -r | tac | awk '!a[$0]++' | fzf --query "$LBUFFER")
-    BUFFER=$(\history -n 1 -r | fzf --no-sort +m --query "$LBUFFER")
+    BUFFER=$(\history -r -n 1 | fzf --no-sort +m --query "$LBUFFER")
     CURSOR=$#BUFFER
     # zle clear-screen
 }
