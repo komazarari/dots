@@ -16,3 +16,4 @@
 
 [ghq]
     root = ~/src
+    root = ~/win/src

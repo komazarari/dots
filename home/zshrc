@@ -14,11 +14,11 @@ setopt HIST_IGNORE_ALL_DUPS
 #     zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
 # fi
 
-zplug mafredri/zsh-async, from:github
-zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
+zplug "mafredri/zsh-async", from:github
+zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
 
 zplug "b4b4r07/enhancd", use:init.sh
-# ENHANCD_FILTER=fzf; export ENHANCD_FILTER
+ENHANCD_FILTER=fzf; export ENHANCD_FILTER
 
 HISTFILE=${ZSH_HISTORY:-~/.zsh_history}
 HISTSIZE=10000
@@ -67,6 +67,10 @@ if [ $DOTFILES/.zshrc -nt ~/.zshrc.zwc ]; then
   zcompile ~/.zshrc
 fi
 
+if [ -e /usr/local/bin/aws_zsh_completer.sh ]; then
+    source /usr/local/bin/aws_zsh_completer.sh
+fi
+
 if [ "$INSIDE_EMACS" ]; then
         TERM=eterm-color
 fi
@@ -77,13 +81,61 @@ export DISPLAY=localhost:0.0
     # command_path="/mnt/c/Program Files (x86)/VcXsrv/vcxsrv.exe"
     command_path="/mnt/c/Program Files/VcXsrv/vcxsrv.exe"
     command_name=$(basename "$command_path")
-    if ! tasklist.exe 2> /dev/null | fgrep -q "$command_name"; then
+    tasklist="/mnt/c/Windows/System32/tasklist.exe"
+    if ! $tasklist 2> /dev/null | fgrep -q "$command_name"; then
         "$command_path" :0 -multiwindow -clipboard -wgl > /dev/null 2>&1 &
     fi
 )
 alias emacs="NO_AT_BRIDGE=1 LIBGL_ALWAYS_INDIRECT=1 emacs"
+
+# if type gnome-keyring-daemon > /dev/null 2>&1 ; then
+#     # export 済みか確認する
+#     ssh-add -l &>/dev/null
+#     if [ "$?" = 2 ]; then
+#         # 接続できなかった, 起動済みの設定があれば読む
+#         test -r ~/.gnome-keyring && \
+#             source ~/.gnome-keyring && \
+#             export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID
+# #            export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL GPG_AGENT_INFO GNOME_KEYRING_PID
+
+#         # .gnome-keyring 読んだ後接続できるか確認する
+#         ssh-add -l &>/dev/null
+#         if [ "$?" = 2 ]; then
+#             # できなかったので 新しく keyring-daemon 立ち上げて書き込む
+#             (umask 066; echo `dbus-launch --sh-syntax` > ~/.gnome-keyring; gnome-keyring-daemon >> ~/.gnome-keyring)
+#             (umask 066; eval `dbus-launch --sh-syntax | tee ~/.gnome-keyring`; gnome-keyring-daemon >> ~/.gnome-keyring)
+#             source ~/.gnome-keyring && \
+#                 export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID
+# #                export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL GPG_AGENT_INFO GNOME_KEYRING_PID
+#         fi
+#     fi
+# fi
+#else
+    # keychain -q ~/.ssh/id_rsa
+    # source ~/.keychain/`hostname`-sh
+# fi
+if type gnome-keyring-daemon > /dev/null 2>&1 ; then
+    if ! kill -HUP $DBUS_SESSION_BUS_PID > /dev/null 2>&1; then
+    # if [ "$?" = 2 ]; then
+        # たぶん dbus 接続情報持ってない
+        test -r ~/.gnome-keyring && \
+            source ~/.gnome-keyring && \
+            export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID GNOME_KEYRING_CONTROL
+        # 置いてある .gnome-keyring 読んだ後接続できるか確認する
+        if ! dbus-update-activation-environment ; then
+        # if [ "$?" = 2 ]; then
+            # できなかったので 新しく keyring-daemon 立ち上げて書き込む
+            (umask 066; eval `dbus-launch --sh-syntax | tee ~/.gnome-keyring`; gnome-keyring-daemon >> ~/.gnome-keyring)
+            source ~/.gnome-keyring && \
+            export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID GNOME_KEYRING_CONTROL
+        fi
+    fi
+fi
+# gnome-keyring-daemon の ssh-agent が動作不安定なので keychain 使う
 keychain -q ~/.ssh/id_rsa
 source ~/.keychain/`hostname`-sh
+
+eval "$(direnv hook zsh)"
 
 if type zprof > /dev/null 2>&1; then
     zprof | less
