@@ -143,10 +143,14 @@ export DISPLAY=localhost:0.0
     # command_path="/mnt/c/Program Files (x86)/VcXsrv/vcxsrv.exe"
     command_path="/mnt/c/Program Files/VcXsrv/vcxsrv.exe"
     command_name=$(basename "$command_path")
-    if ! tasklist.exe 2> /dev/null | fgrep -q "$command_name"; then
+    tasklist="/mnt/c/Windows/System32/tasklist.exe"
+    if ! $tasklist 2> /dev/null | fgrep -q "$command_name"; then
+    # if ! tasklist.exe 2> /dev/null | fgrep -q "$command_name"; then
         "$command_path" :0 -multiwindow -clipboard -wgl > /dev/null 2>&1 &
     fi
 )
 alias emacs="NO_AT_BRIDGE=1 LIBGL_ALWAYS_INDIRECT=1 emacs"
 keychain -q ~/.ssh/id_rsa
 source ~/.keychain/$HOSTNAME-sh
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

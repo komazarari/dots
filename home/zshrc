@@ -17,21 +17,21 @@ setopt HIST_IGNORE_ALL_DUPS
 zplug "mafredri/zsh-async", from:github
 zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
 
-zplug "b4b4r07/enhancd", use:init.sh
+# zplug "b4b4r07/enhancd", use:init.sh
 ENHANCD_FILTER=fzf; export ENHANCD_FILTER
 
 HISTFILE=${ZSH_HISTORY:-~/.zsh_history}
 HISTSIZE=10000
 SAVEHIST=10000
 
-function peco-select-history() {
-#    BUFFER=$(\history -n 1 -r | tac | awk '!a[$0]++' | fzf --query "$LBUFFER")
-    BUFFER=$(\history -r -n 1 | fzf --no-sort +m --query "$LBUFFER")
-    CURSOR=$#BUFFER
-    # zle clear-screen
-}
-zle -N peco-select-history
-bindkey '^r' peco-select-history
+# function peco-select-history() {
+# #    BUFFER=$(\history -n 1 -r | tac | awk '!a[$0]++' | fzf --query "$LBUFFER")
+#     BUFFER=$(\history -r -n 1 | fzf --no-sort +m --query "$LBUFFER")
+#     CURSOR=$#BUFFER
+#     # zle clear-screen
+# }
+# zle -N peco-select-history
+# bindkey '^r' peco-select-history
 
 function peco-src() {
    local src=$(ghq list --full-path | fzf +m --query "$LBUFFER")
@@ -136,7 +136,17 @@ keychain -q ~/.ssh/id_rsa
 source ~/.keychain/`hostname`-sh
 
 eval "$(direnv hook zsh)"
+# eval "$(hub alias -s)"
 
+if [ -f ~/.fzf.zsh ]; then
+    source ~/.fzf.zsh
+fi
 if type zprof > /dev/null 2>&1; then
     zprof | less
 fi
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "${HOME}/gcloud/google-cloud-sdk/path.zsh.inc" ]; then source "${HOME}/gcloud/google-cloud-sdk/path.zsh.inc"; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f "${HOME}/gcloud/google-cloud-sdk/completion.zsh.inc" ]; then source "${HOME}/gcloud/google-cloud-sdk/completion.zsh.inc"; fi
