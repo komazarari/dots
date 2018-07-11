@@ -83,7 +83,7 @@ export DISPLAY=localhost:0.0
     command_name=$(basename "$command_path")
     tasklist="/mnt/c/Windows/System32/tasklist.exe"
     if ! $tasklist 2> /dev/null | fgrep -q "$command_name"; then
-        "$command_path" :0 -multiwindow -clipboard -wgl > /dev/null 2>&1 &
+        "$command_path" :0 -multiwindow -clipboard -noprimary -wgl > /dev/null 2>&1 &
     fi
 )
 alias emacs="NO_AT_BRIDGE=1 LIBGL_ALWAYS_INDIRECT=1 emacs"
@@ -133,6 +133,9 @@ if type gnome-keyring-daemon > /dev/null 2>&1 ; then
 fi
 # gnome-keyring-daemon の ssh-agent が動作不安定なので keychain 使う
 keychain -q ~/.ssh/id_rsa
+if [ -e ~/.ssh/id_rsa_work ]; then
+    keychain -q ~/.ssh/id_rsa_work
+fi
 source ~/.keychain/`hostname`-sh
 
 eval "$(direnv hook zsh)"
