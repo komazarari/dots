@@ -61,6 +61,8 @@ PATH=$PATH:$HOME/.rbenv/bin
 # eval "$(rbenv init -)"
 eval "$(rbenv init - --no-rehash)"
 
+PATH=$PATH:$HOME/.local/bin
+
 zplug load # --verbose
 
 if [ $DOTFILES/.zshrc -nt ~/.zshrc.zwc ]; then
