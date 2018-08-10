@@ -2,6 +2,7 @@ source ~/.zplug/init.zsh
 
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_NO_STORE
 
 # if [ -n "$MSYSTEM" ]; then
 #     unsetopt promptcr
