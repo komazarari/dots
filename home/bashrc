@@ -90,6 +90,9 @@ case "${OSTYPE}" in
         export LSCOLORS=DxGxcxdxCxegedabagacad
 esac
 
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
@@ -122,15 +125,29 @@ fi
 export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$PATH
 
+export PATH=$HOME/.local/bin:$PATH
+
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+if which keychain > /dev/null; then
+  keychain -q ~/.ssh/id_rsa
+  source ~/.keychain/$HOSTNAME-sh
+fi
+
+if [ -f "$HOME/.rbenv/bin/rbenv" ]; then
+    PATH=$PATH:$HOME/.rbenv/bin
+    eval "$(rbenv init -)"
+fi
+if [ -f "$HOME/.nodenv/bin/nodenv" ]; then
+    PATH=$PATH:$HOME/.nodenv/bin
+    eval "$(nodenv init -)"
+fi
+if [ -d "/mnt/c/Program Files/Docker/Docker/resources/bin" ]; then
+    PATH=$PATH:"/mnt/c/Program Files/Docker/Docker/resources/bin"
+fi
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f "$HOME/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/google-cloud-sdk/completion.bash.inc"; fi
-
-if [ -f "$HOME/.rbenv/bin/rbenv" ]; then
-    PATH=$PATH:$HOME/.rbenv/bin
-    eval "$(rbenv init -)"
-fi

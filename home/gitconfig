@@ -15,6 +15,6 @@
     lgrep = "!f(){ git grep $1 $(git branch | sed 's/\\*//'); };f"
 
 [ghq]
-    root = ~/src
     root = ~/go/src
+    root = ~/src
     # root = ~/win/src
