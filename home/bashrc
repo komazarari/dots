@@ -145,6 +145,9 @@ fi
 if [ -d "/mnt/c/Program Files/Docker/Docker/resources/bin" ]; then
     PATH=$PATH:"/mnt/c/Program Files/Docker/Docker/resources/bin"
 fi
+if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
