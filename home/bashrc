@@ -142,6 +142,11 @@ if [ -f "$HOME/.nodenv/bin/nodenv" ]; then
     PATH=$PATH:$HOME/.nodenv/bin
     eval "$(nodenv init -)"
 fi
+
+if [ -f "$HOME/.cargo/env" ]; then
+    . "$HOME/.cargo/env"
+fi
+
 if [ -d "/mnt/c/Program Files/Docker/Docker/resources/bin" ]; then
     PATH=$PATH:"/mnt/c/Program Files/Docker/Docker/resources/bin"
 fi
