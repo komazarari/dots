@@ -18,3 +18,5 @@
     root = ~/go/src
     root = ~/src
     # root = ~/win/src
+[include]
+    path = ~/.config/git/business
