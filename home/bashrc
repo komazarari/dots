@@ -163,3 +163,9 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN="True"
 
 # The next line enables shell command completion for gcloud.
 if [ -f "$HOME/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/google-cloud-sdk/completion.bash.inc"; fi
+
+# The next line enables shell command completion for deno.
+if [ -f "$HOME/.deno/env" ]; then
+   . "/home/takuto-komazaki/.deno/env"
+   source "$HOME"/.local/share/bash-completion/completions/deno.bash
+fi
