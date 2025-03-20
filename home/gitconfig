@@ -17,13 +17,22 @@
     ls = log --graph --all --color --pretty=format:'%Cgreen%h %cd %Cred%cn %Creset%s %Cred%d'
     rgrep = "!f(){ git grep $1 $(git ls-remote . 'refs/remotes/*' | cut -f 2); };f"
     lgrep = "!f(){ git grep $1 $(git branch | sed 's/\\*//'); };f"
-
+[url "https://github.com"]
+	insteadOf = git://github.com
 [ghq]
     root = ~/go/src
     root = ~/src
     # root = ~/win/src
+[init]
+	defaultBranch = main
+[clone]
+	filterSubmodules = true
+[fetch]
+	filter = blob:none
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
 [include]
     path = ~/.config/git/business
-
-[url "https://github.com"]
-	insteadOf = git://github.com

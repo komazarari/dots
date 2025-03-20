@@ -153,8 +153,8 @@ fi
 if [ -d "/home/linuxbrew/.linuxbrew/bin" ]; then
     eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
-if [ -d "/mnt/c/Program Files/Microsoft VS Code/bin/code" ]; then
-    PATH=$PATH:'/mnt/c/Program Files/Microsoft VS Code/bin/code'
+if [ -d "/mnt/c/Program Files/Microsoft VS Code/bin" ]; then
+    PATH=$PATH:'/mnt/c/Program Files/Microsoft VS Code/bin'
 fi
 
 # The next line updates PATH for the Google Cloud SDK.
