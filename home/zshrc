@@ -1,158 +1,162 @@
-source ~/.zplug/init.zsh
+# => https://github.com/komazarari/fish
 
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_NO_STORE
 
-# if [ -n "$MSYSTEM" ]; then
-#     unsetopt promptcr
-#     if [ -f /tmp/ssh-agent-env ]; then
-#         . /tmp/ssh-agent-env
-#     fi
-#     zplug 'dracula/zsh', as:theme
-# else
-#     zplug mafredri/zsh-async, from:github
-#     zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
-# fi
 
-zplug "mafredri/zsh-async", from:github
-zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
-
-# zplug "b4b4r07/enhancd", use:init.sh
-ENHANCD_FILTER=fzf; export ENHANCD_FILTER
-
-HISTFILE=${ZSH_HISTORY:-~/.zsh_history}
-HISTSIZE=10000
-SAVEHIST=10000
-
-# function peco-select-history() {
-# #    BUFFER=$(\history -n 1 -r | tac | awk '!a[$0]++' | fzf --query "$LBUFFER")
-#     BUFFER=$(\history -r -n 1 | fzf --no-sort +m --query "$LBUFFER")
-#     CURSOR=$#BUFFER
-#     # zle clear-screen
-# }
-# zle -N peco-select-history
-# bindkey '^r' peco-select-history
-
-function peco-src() {
-   local src=$(ghq list --full-path | fzf +m --query "$LBUFFER")
-   if [ -n "$src" ]; then
-       BUFFER="cd $src"
-       zle accept-line
-   fi
-   zle -R -c
-}
-zle -N peco-src
-bindkey '^]' peco-src
-
-# if ! zplug check --verbose; then
-#     printf "Install? [y/N]: "
-#     if read -q; then
-#         echo; zplug install
-#     fi
-# fi
-
-export GOPATH=$HOME/dev
-export PATH=$GOPATH/bin:$PATH
-if [ -f ~/.bash_aliases ]; then
-   . ~/.bash_aliases
-fi
-
-PATH=$PATH:$HOME/.rbenv/bin
-# eval "$(rbenv init -)"
-eval "$(rbenv init - --no-rehash)"
-
-PATH=$PATH:$HOME/.local/bin
-
-zplug load # --verbose
-
-if [ $DOTFILES/.zshrc -nt ~/.zshrc.zwc ]; then
-  zcompile ~/.zshrc
-fi
-
-if [ -e /usr/local/bin/aws_zsh_completer.sh ]; then
-    source /usr/local/bin/aws_zsh_completer.sh
-fi
-
-if [ "$INSIDE_EMACS" ]; then
-        TERM=eterm-color
-fi
-umask 022
-export DISPLAY=localhost:0.0
-
-(
-    # command_path="/mnt/c/Program Files (x86)/VcXsrv/vcxsrv.exe"
-    command_path="/mnt/c/Program Files/VcXsrv/vcxsrv.exe"
-    command_name=$(basename "$command_path")
-    tasklist="/mnt/c/Windows/System32/tasklist.exe"
-    if ! $tasklist 2> /dev/null | fgrep -q "$command_name"; then
-        "$command_path" :0 -multiwindow -clipboard -noprimary -wgl > /dev/null 2>&1 &
-    fi
-)
-alias emacs="NO_AT_BRIDGE=1 LIBGL_ALWAYS_INDIRECT=1 emacs"
-
-# if type gnome-keyring-daemon > /dev/null 2>&1 ; then
-#     # export 済みか確認する
-#     ssh-add -l &>/dev/null
-#     if [ "$?" = 2 ]; then
-#         # 接続できなかった, 起動済みの設定があれば読む
-#         test -r ~/.gnome-keyring && \
-#             source ~/.gnome-keyring && \
-#             export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID
-# #            export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL GPG_AGENT_INFO GNOME_KEYRING_PID
-
-#         # .gnome-keyring 読んだ後接続できるか確認する
-#         ssh-add -l &>/dev/null
-#         if [ "$?" = 2 ]; then
-#             # できなかったので 新しく keyring-daemon 立ち上げて書き込む
-#             (umask 066; echo `dbus-launch --sh-syntax` > ~/.gnome-keyring; gnome-keyring-daemon >> ~/.gnome-keyring)
-#             (umask 066; eval `dbus-launch --sh-syntax | tee ~/.gnome-keyring`; gnome-keyring-daemon >> ~/.gnome-keyring)
-#             source ~/.gnome-keyring && \
-#                 export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID
-# #                export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL GPG_AGENT_INFO GNOME_KEYRING_PID
-#         fi
-#     fi
-# fi
-#else
-    # keychain -q ~/.ssh/id_rsa
-    # source ~/.keychain/`hostname`-sh
-# fi
-if type gnome-keyring-daemon > /dev/null 2>&1 ; then
-    if ! kill -HUP $DBUS_SESSION_BUS_PID > /dev/null 2>&1; then
-    # if [ "$?" = 2 ]; then
-        # たぶん dbus 接続情報持ってない
-        test -r ~/.gnome-keyring && \
-            source ~/.gnome-keyring && \
-            export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID GNOME_KEYRING_CONTROL
-        # 置いてある .gnome-keyring 読んだ後接続できるか確認する
-        if ! dbus-update-activation-environment ; then
-        # if [ "$?" = 2 ]; then
-            # できなかったので 新しく keyring-daemon 立ち上げて書き込む
-            (umask 066; eval `dbus-launch --sh-syntax | tee ~/.gnome-keyring`; gnome-keyring-daemon >> ~/.gnome-keyring)
-            source ~/.gnome-keyring && \
-            export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID GNOME_KEYRING_CONTROL
-        fi
-    fi
-fi
-# gnome-keyring-daemon の ssh-agent が動作不安定なので keychain 使う
-keychain -q ~/.ssh/id_rsa
-if [ -e ~/.ssh/id_rsa_work ]; then
-    keychain -q ~/.ssh/id_rsa_work
-fi
-source ~/.keychain/`hostname`-sh
-
-eval "$(direnv hook zsh)"
-# eval "$(hub alias -s)"
-
-if [ -f ~/.fzf.zsh ]; then
-    source ~/.fzf.zsh
-fi
-if type zprof > /dev/null 2>&1; then
-    zprof | less
-fi
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f "${HOME}/gcloud/google-cloud-sdk/path.zsh.inc" ]; then source "${HOME}/gcloud/google-cloud-sdk/path.zsh.inc"; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f "${HOME}/gcloud/google-cloud-sdk/completion.zsh.inc" ]; then source "${HOME}/gcloud/google-cloud-sdk/completion.zsh.inc"; fi
+#source ~/.zplug/init.zsh
+#
+#setopt HIST_IGNORE_DUPS
+#setopt HIST_IGNORE_ALL_DUPS
+#setopt HIST_NO_STORE
+#
+## if [ -n "$MSYSTEM" ]; then
+##     unsetopt promptcr
+##     if [ -f /tmp/ssh-agent-env ]; then
+##         . /tmp/ssh-agent-env
+##     fi
+##     zplug 'dracula/zsh', as:theme
+## else
+##     zplug mafredri/zsh-async, from:github
+##     zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
+## fi
+#
+#zplug "mafredri/zsh-async", from:github
+#zplug "sindresorhus/pure", use:pure.zsh, from:github, as:theme
+#
+## zplug "b4b4r07/enhancd", use:init.sh
+#ENHANCD_FILTER=fzf; export ENHANCD_FILTER
+#
+#HISTFILE=${ZSH_HISTORY:-~/.zsh_history}
+#HISTSIZE=10000
+#SAVEHIST=10000
+#
+## function peco-select-history() {
+## #    BUFFER=$(\history -n 1 -r | tac | awk '!a[$0]++' | fzf --query "$LBUFFER")
+##     BUFFER=$(\history -r -n 1 | fzf --no-sort +m --query "$LBUFFER")
+##     CURSOR=$#BUFFER
+##     # zle clear-screen
+## }
+## zle -N peco-select-history
+## bindkey '^r' peco-select-history
+#
+#function peco-src() {
+#   local src=$(ghq list --full-path | fzf +m --query "$LBUFFER")
+#   if [ -n "$src" ]; then
+#       BUFFER="cd $src"
+#       zle accept-line
+#   fi
+#   zle -R -c
+#}
+#zle -N peco-src
+#bindkey '^]' peco-src
+#
+## if ! zplug check --verbose; then
+##     printf "Install? [y/N]: "
+##     if read -q; then
+##         echo; zplug install
+##     fi
+## fi
+#
+#export GOPATH=$HOME/dev
+#export PATH=$GOPATH/bin:$PATH
+#if [ -f ~/.bash_aliases ]; then
+#   . ~/.bash_aliases
+#fi
+#
+#PATH=$PATH:$HOME/.rbenv/bin
+## eval "$(rbenv init -)"
+#eval "$(rbenv init - --no-rehash)"
+#
+#PATH=$PATH:$HOME/.local/bin
+#
+#zplug load # --verbose
+#
+#if [ $DOTFILES/.zshrc -nt ~/.zshrc.zwc ]; then
+#  zcompile ~/.zshrc
+#fi
+#
+#if [ -e /usr/local/bin/aws_zsh_completer.sh ]; then
+#    source /usr/local/bin/aws_zsh_completer.sh
+#fi
+#
+#if [ "$INSIDE_EMACS" ]; then
+#        TERM=eterm-color
+#fi
+#umask 022
+#export DISPLAY=localhost:0.0
+#
+#(
+#    # command_path="/mnt/c/Program Files (x86)/VcXsrv/vcxsrv.exe"
+#    command_path="/mnt/c/Program Files/VcXsrv/vcxsrv.exe"
+#    command_name=$(basename "$command_path")
+#    tasklist="/mnt/c/Windows/System32/tasklist.exe"
+#    if ! $tasklist 2> /dev/null | fgrep -q "$command_name"; then
+#        "$command_path" :0 -multiwindow -clipboard -noprimary -wgl > /dev/null 2>&1 &
+#    fi
+#)
+#alias emacs="NO_AT_BRIDGE=1 LIBGL_ALWAYS_INDIRECT=1 emacs"
+#
+## if type gnome-keyring-daemon > /dev/null 2>&1 ; then
+##     # export 済みか確認する
+##     ssh-add -l &>/dev/null
+##     if [ "$?" = 2 ]; then
+##         # 接続できなかった, 起動済みの設定があれば読む
+##         test -r ~/.gnome-keyring && \
+##             source ~/.gnome-keyring && \
+##             export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID
+## #            export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL GPG_AGENT_INFO GNOME_KEYRING_PID
+#
+##         # .gnome-keyring 読んだ後接続できるか確認する
+##         ssh-add -l &>/dev/null
+##         if [ "$?" = 2 ]; then
+##             # できなかったので 新しく keyring-daemon 立ち上げて書き込む
+##             (umask 066; echo `dbus-launch --sh-syntax` > ~/.gnome-keyring; gnome-keyring-daemon >> ~/.gnome-keyring)
+##             (umask 066; eval `dbus-launch --sh-syntax | tee ~/.gnome-keyring`; gnome-keyring-daemon >> ~/.gnome-keyring)
+##             source ~/.gnome-keyring && \
+##                 export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL SSH_AUTH_SOCK GPG_AGENT_INFO GNOME_KEYRING_PID
+## #                export DBUS_SESSION_BUS_ADDRESS GNOME_KEYRING_CONTROL GPG_AGENT_INFO GNOME_KEYRING_PID
+##         fi
+##     fi
+## fi
+##else
+#    # keychain -q ~/.ssh/id_rsa
+#    # source ~/.keychain/`hostname`-sh
+## fi
+#if type gnome-keyring-daemon > /dev/null 2>&1 ; then
+#    if ! kill -HUP $DBUS_SESSION_BUS_PID > /dev/null 2>&1; then
+#    # if [ "$?" = 2 ]; then
+#        # たぶん dbus 接続情報持ってない
+#        test -r ~/.gnome-keyring && \
+#            source ~/.gnome-keyring && \
+#            export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID GNOME_KEYRING_CONTROL
+#        # 置いてある .gnome-keyring 読んだ後接続できるか確認する
+#        if ! dbus-update-activation-environment ; then
+#        # if [ "$?" = 2 ]; then
+#            # できなかったので 新しく keyring-daemon 立ち上げて書き込む
+#            (umask 066; eval `dbus-launch --sh-syntax | tee ~/.gnome-keyring`; gnome-keyring-daemon >> ~/.gnome-keyring)
+#            source ~/.gnome-keyring && \
+#            export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID GNOME_KEYRING_CONTROL
+#        fi
+#    fi
+#fi
+## gnome-keyring-daemon の ssh-agent が動作不安定なので keychain 使う
+#keychain -q ~/.ssh/id_rsa
+#if [ -e ~/.ssh/id_rsa_work ]; then
+#    keychain -q ~/.ssh/id_rsa_work
+#fi
+#source ~/.keychain/`hostname`-sh
+#
+#eval "$(direnv hook zsh)"
+## eval "$(hub alias -s)"
+#
+#if [ -f ~/.fzf.zsh ]; then
+#    source ~/.fzf.zsh
+#fi
+#if type zprof > /dev/null 2>&1; then
+#    zprof | less
+#fi
+#
+## The next line updates PATH for the Google Cloud SDK.
+#if [ -f "${HOME}/gcloud/google-cloud-sdk/path.zsh.inc" ]; then source "${HOME}/gcloud/google-cloud-sdk/path.zsh.inc"; fi
+#
+## The next line enables shell command completion for gcloud.
+#if [ -f "${HOME}/gcloud/google-cloud-sdk/completion.zsh.inc" ]; then source "${HOME}/gcloud/google-cloud-sdk/completion.zsh.inc"; fi
