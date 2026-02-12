@@ -26,13 +26,16 @@
 [init]
 	defaultBranch = main
 [clone]
+	filter = blob:none
 	filterSubmodules = true
 [fetch]
 	filter = blob:none
-[filter "lfs"]
-	process = git-lfs filter-process
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
+#[filter "lfs"]
+#	process = git-lfs filter-process
+#	required = true
+#	clean = git-lfs clean -- %f
+#	smudge = git-lfs smudge -- %f
 [include]
     path = ~/.config/git/business
+[submodule]
+    blobFilter = blob:none
