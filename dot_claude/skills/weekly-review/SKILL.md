@@ -9,7 +9,7 @@ description: GTD Weekly Reviewスキル。毎週のGTDレビューを対話形�
 
 ## 環境情報
 
-- **Obsidian Vault**: `/Users/takuto.komazaki/Obsidian_Main/`
+- **Obsidian Vault**: `$HOME/Obsidian_Main/`
 - **テンプレート**: `.templates/gtd_weekly_review.md`
 - **出力先**: `gtd/WeeklyReview/YYYY-MM-DD_WeeklyReview.md`
 - **Projects**: `gtd/Projects/`
@@ -54,11 +54,14 @@ description: GTD Weekly Reviewスキル。毎週のGTDレビューを対話形�
 
 ---
 
-## Phase 2: AIスキャン (ここが核心)
+## Phase 2: AIスキャン
 
 「ではAIスキャンを行います」と伝えて、以下を並行してスキャンする。
 
-### 2-1. WaitFor チェック
+### 2-1. Inbox 整理
+`/inbox` Skill を使い、inbox の内容を処理する。もしも `/inbox` Skill が見付からない場合はユーザに inbox の整理を促す。
+
+### 2-2. WaitFor チェック
 
 `gtd/WaitFor/` 配下の全 `.md` ファイルを読んで frontmatter の `due` と `status` を確認する。
 
@@ -82,7 +85,7 @@ description: GTD Weekly Reviewスキル。毎週のGTDレビューを対話形�
 - 期限延長 → ファイルの `due` を更新
 - 解決済み → `status: done` にしてファイルを `z_archived/` 相当に移動するか確認
 
-### 2-2. Projects チェック
+### 2-3. Projects チェック
 
 `gtd/Projects/` 配下の全 `.md` ファイルを読んで frontmatter の `status`, `importance`, `todoist_action_id` と本文の Actions チェックリストを確認する。
 
